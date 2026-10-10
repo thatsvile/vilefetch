@@ -1,0 +1,39 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/vilefetch
+/bin/
+/dist/
+
+# Test and coverage output
+*.test
+*.out
+*.coverprofile
+coverage.html
+coverage.txt
+
+# Go workspace
+go.work
+go.work.sum
+
+# Module vendor directory
+vendor/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Editor and OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
