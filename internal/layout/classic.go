@@ -86,6 +86,9 @@ func Classic(fields map[string]string) Layout {
 		mustField("uptime"), mustField("shell"), mustField("cpu"), mustField("gpu"),
 		mustField("memory"), mustField("disk"),
 	}
+	if fields != nil && fields["packages.text"] != "" {
+		defs = append(defs, mustField("packages"))
+	}
 	if fields != nil && fields["display.0.text"] != "" {
 		for _, f := range Fields(fields) {
 			if strings.HasPrefix(f.Key, "display.") {

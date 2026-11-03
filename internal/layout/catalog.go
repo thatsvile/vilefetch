@@ -27,10 +27,25 @@ func BuiltinFields() []FieldDef {
 		{Key: "swap", Label: "Swap", Format: "{swap.text}", Glyph: "▮", Bar: true, BarField: "swap.percent"},
 		{Key: "disk", Label: "Disk", Format: "{disk.text}", Glyph: "▮", Bar: true, BarField: "disk.percent"},
 		{Key: "battery", Label: "Battery", Format: "{battery.text}", Glyph: "◉", Bar: true, BarField: "battery.percent"},
+		{Key: "packages", Label: "Packages", Format: "{packages.text}", Glyph: "▣"},
 	}
 }
 
-// Fields appends one entry per connected display.
+// packageFieldOrder matches info.packageManagers IDs for stable palette order.
+var packageFieldOrder = []struct {
+	ID    string
+	Label string
+}{
+	{"pacman", "Pacman"},
+	{"flatpak", "Flatpak"},
+	{"dpkg", "dpkg"},
+	{"rpm", "RPM"},
+	{"snap", "Snap"},
+	{"nix", "Nix"},
+	{"brew", "Brew"},
+}
+
+// Fields appends connected displays and any detected package managers.
 func Fields(info map[string]string) []FieldDef {
 	out := BuiltinFields()
 	n := 0
@@ -47,16 +62,30 @@ func Fields(info map[string]string) []FieldDef {
 	}
 	if n == 0 {
 		out = append(out, FieldDef{Key: "display.0", Label: "Display", Format: "{display.0.text}", Glyph: "▣"})
-		return out
+	} else {
+		for i := 0; i < n; i++ {
+			key := "display." + itoa(i)
+			out = append(out, FieldDef{
+				Key:    key,
+				Label:  "Display " + itoa(i+1),
+				Format: "{" + key + ".text}",
+				Glyph:  "▣",
+			})
+		}
 	}
-	for i := 0; i < n; i++ {
-		key := "display." + itoa(i)
-		out = append(out, FieldDef{
-			Key:    key,
-			Label:  "Display " + itoa(i+1),
-			Format: "{" + key + ".text}",
-			Glyph:  "▣",
-		})
+	if info != nil {
+		for _, m := range packageFieldOrder {
+			key := "packages." + m.ID
+			if info[key] == "" {
+				continue
+			}
+			out = append(out, FieldDef{
+				Key:    key,
+				Label:  m.Label,
+				Format: "{" + key + "}",
+				Glyph:  "▣",
+			})
+		}
 	}
 	return out
 }

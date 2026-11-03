@@ -33,6 +33,7 @@ func Collect(ctx context.Context) map[string]string {
 	merge(out, displays())
 	merge(out, battery())
 	merge(out, session())
+	merge(out, packages(ctx))
 	return out
 }
 
